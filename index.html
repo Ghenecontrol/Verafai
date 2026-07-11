@@ -1,0 +1,953 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verifai — AI Deepfake & Synthetic Media Detection</title>
+  <meta name="description" content="Verifai detects AI-generated and manipulated video, audio, and images in real time, with a confidence score, flagged regions, and a plain-language explanation.">
+  <meta property="og:title" content="Verifai — AI Deepfake & Synthetic Media Detection">
+  <meta property="og:description" content="Verifai detects AI-generated and manipulated video, audio, and images in real time, with a confidence score, flagged regions, and a plain-language explanation.">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#050708">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect x='2' y='2' width='28' height='28' rx='6' fill='%23050708' stroke='%233dffb0' stroke-width='2'/%3E%3Ccircle cx='16' cy='16' r='4' fill='%233dffb0'/%3E%3C/svg%3E">
+  <style>
+    :root{
+      --bg:#050708; --bg-1:#0a0d10; --bg-2:#0e1216; --panel:#0c1013;
+      --line:rgba(90,240,200,0.14); --line-strong:rgba(90,240,200,0.28);
+      --ink:#e9f3ef; --ink-dim:#8fa39c; --ink-faint:#5a6b66;
+      --signal:#3dffb0; --signal-dim:#22a377; --alert:#ff4d6a; --alert-dim:#8a2f3d;
+      --amber:#ffb648;
+      --mono: ui-monospace, "SFMono-Regular", Menlo, Consolas, "Liberation Mono", monospace;
+      --sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+      --radius: 3px;
+      --maxw: 1180px;
+    }
+    *{box-sizing:border-box; margin:0; padding:0;}
+    html{scroll-behavior:smooth;}
+    body{
+      background:
+        radial-gradient(ellipse 900px 500px at 15% -10%, rgba(61,255,176,0.07), transparent 60%),
+        radial-gradient(ellipse 700px 500px at 100% 10%, rgba(61,255,176,0.05), transparent 55%),
+        var(--bg);
+      color:var(--ink); font-family:var(--sans); line-height:1.5; font-size:16px;
+      -webkit-font-smoothing:antialiased;
+      background-image:
+        linear-gradient(rgba(61,255,176,0.035) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(61,255,176,0.035) 1px, transparent 1px),
+        radial-gradient(ellipse 900px 500px at 15% -10%, rgba(61,255,176,0.07), transparent 60%),
+        var(--bg);
+      background-size: 42px 42px, 42px 42px, auto, auto;
+    }
+    a{color:inherit; text-decoration:none;}
+    img{max-width:100%; display:block;}
+    .wrap{max-width:var(--maxw); margin:0 auto; padding:0 28px;}
+    .mono{font-family:var(--mono);}
+    .eyebrow{
+      font-family:var(--mono); font-size:11.5px; letter-spacing:.18em; text-transform:uppercase;
+      color:var(--signal); display:inline-flex; align-items:center; gap:8px; margin-bottom:16px;
+    }
+    .eyebrow::before{content:""; width:6px; height:6px; background:var(--signal); border-radius:50%; box-shadow:0 0 8px var(--signal); flex:none;}
+    h1,h2,h3,h4{font-family:var(--sans); font-weight:650; letter-spacing:-0.015em; color:var(--ink);}
+    h1{font-size:clamp(2.4rem,5vw,4.1rem); line-height:1.04;}
+    h2{font-size:clamp(1.7rem,3vw,2.5rem); line-height:1.1;}
+    h3{font-size:1.2rem; line-height:1.3;}
+    p{color:var(--ink-dim);}
+    .lede{font-size:1.15rem; color:var(--ink-dim); max-width:640px;}
+
+    /* ---- nav ---- */
+    header.site{
+      position:sticky; top:0; z-index:50;
+      background:rgba(5,7,8,0.82); backdrop-filter:blur(10px);
+      border-bottom:1px solid var(--line);
+    }
+    .navrow{display:flex; align-items:center; justify-content:space-between; height:68px;}
+    .brand{display:flex; align-items:center; gap:10px; font-family:var(--mono); font-weight:600; font-size:15px; letter-spacing:.02em;}
+    .brand-mark{
+      width:26px; height:26px; border:1.5px solid var(--signal); border-radius:6px;
+      display:flex; align-items:center; justify-content:center; position:relative; flex:none;
+      box-shadow:0 0 12px rgba(61,255,176,0.25) inset;
+    }
+    .brand-mark::before{content:""; width:8px; height:8px; background:var(--signal); border-radius:50%; box-shadow:0 0 8px var(--signal);}
+    nav.links{display:flex; gap:2px; align-items:center;}
+    nav.links a{
+      font-size:13.5px; color:var(--ink-dim); padding:9px 14px; border-radius:var(--radius);
+      transition:color .15s, background .15s;
+    }
+    nav.links a:hover{color:var(--ink); background:rgba(61,255,176,0.06);}
+    nav.links a.active{color:var(--signal);}
+    .navcta{display:flex; align-items:center; gap:10px;}
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center; gap:8px;
+      font-family:var(--sans); font-weight:600; font-size:13.5px; padding:10px 20px;
+      border-radius:var(--radius); border:1px solid var(--line-strong); cursor:pointer;
+      transition:transform .15s, box-shadow .15s, background .15s, border-color .15s;
+      white-space:nowrap;
+    }
+    .btn-primary{background:var(--signal); color:#04140d; border-color:var(--signal);}
+    .btn-primary:hover{box-shadow:0 0 24px rgba(61,255,176,0.4); transform:translateY(-1px);}
+    .btn-ghost{background:transparent; color:var(--ink);}
+    .btn-ghost:hover{border-color:var(--signal-dim); background:rgba(61,255,176,0.05);}
+    .btn-sm{padding:7px 14px; font-size:12.5px;}
+    .menu-toggle{display:none; background:none; border:1px solid var(--line-strong); color:var(--ink); width:38px; height:38px; border-radius:var(--radius); align-items:center; justify-content:center; cursor:pointer;}
+
+    section{padding:96px 0; position:relative; border-bottom:1px solid var(--line);}
+    section.tight{padding:64px 0;}
+    section.nb{border-bottom:none;}
+    .section-head{max-width:660px; margin-bottom:52px;}
+    .section-head.center{margin-left:auto; margin-right:auto; text-align:center;}
+
+    /* ---- hero ---- */
+    .hero{padding:120px 0 96px; overflow:hidden;}
+    .hero-grid{display:grid; grid-template-columns:1.05fr 0.95fr; gap:56px; align-items:center;}
+    .hero-cta-row{display:flex; gap:14px; margin-top:34px; flex-wrap:wrap;}
+    .hero-note{margin-top:20px; font-family:var(--mono); font-size:12px; color:var(--ink-faint); letter-spacing:.02em;}
+
+    .scan-panel{
+      background:var(--panel); border:1px solid var(--line-strong); border-radius:8px; overflow:hidden;
+      box-shadow:0 30px 80px -20px rgba(0,0,0,0.7);
+      position:relative;
+    }
+    .scan-panel-head{
+      display:flex; align-items:center; justify-content:space-between; padding:12px 16px;
+      border-bottom:1px solid var(--line); font-family:var(--mono); font-size:11px; color:var(--ink-faint);
+    }
+    .dots{display:flex; gap:6px;}
+    .dots span{width:8px; height:8px; border-radius:50%; background:var(--line-strong);}
+    .scan-body{padding:22px; position:relative;}
+    .scan-frame{
+      aspect-ratio:16/10; border-radius:6px; border:1px solid var(--line);
+      background:
+        repeating-linear-gradient(0deg, rgba(61,255,176,0.05) 0px, rgba(61,255,176,0.05) 1px, transparent 1px, transparent 26px),
+        linear-gradient(160deg, #0b1512, #060908);
+      position:relative; overflow:hidden;
+    }
+    .scan-frame::after{
+      content:""; position:absolute; left:0; right:0; height:38%;
+      background:linear-gradient(180deg, transparent, rgba(61,255,176,0.16), transparent);
+      animation:sweep 3.4s ease-in-out infinite;
+    }
+    @keyframes sweep{0%{top:-40%;} 100%{top:100%;}}
+    .flag-box{
+      position:absolute; border:1.5px solid var(--alert); border-radius:3px;
+      box-shadow:0 0 14px rgba(255,77,106,0.35);
+    }
+    .flag-box::after{
+      content:attr(data-label); position:absolute; top:-22px; left:0; font-family:var(--mono);
+      font-size:10px; color:var(--alert); white-space:nowrap; letter-spacing:.02em;
+    }
+    .readout{display:flex; justify-content:space-between; align-items:flex-end; margin-top:18px; gap:16px;}
+    .readout-score{font-family:var(--mono);}
+    .readout-score .num{font-size:2.2rem; color:var(--alert); font-weight:600; line-height:1;}
+    .readout-score .lbl{font-size:10.5px; color:var(--ink-faint); letter-spacing:.14em; text-transform:uppercase; margin-top:4px;}
+    .readout-bars{display:flex; gap:3px; align-items:flex-end; height:34px;}
+    .readout-bars span{width:4px; background:var(--signal-dim); border-radius:1px;}
+    .verdict{
+      margin-top:16px; font-family:var(--mono); font-size:12px; color:var(--ink-dim);
+      border-top:1px solid var(--line); padding-top:14px;
+    }
+    .verdict b{color:var(--alert);}
+
+    /* ---- stat / metric rows ---- */
+    .stat-row{display:grid; grid-template-columns:repeat(4,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:8px; overflow:hidden; margin-top:56px;}
+    .stat-cell{background:var(--bg-1); padding:26px 22px;}
+    .stat-cell .num{font-family:var(--mono); font-size:1.9rem; color:var(--signal); font-weight:600;}
+    .stat-cell .lbl{font-size:12.5px; color:var(--ink-faint); margin-top:6px;}
+
+    /* ---- problem table ---- */
+    .problem-grid{display:grid; grid-template-columns:1fr 1fr; gap:1px; background:var(--line); border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+    .problem-cell{background:var(--bg-1); padding:26px 28px;}
+    .problem-cell h4{font-family:var(--mono); font-size:11.5px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:10px;}
+    .problem-cell p{font-size:14.5px;}
+
+    /* ---- feature cards ---- */
+    .grid-3{display:grid; grid-template-columns:repeat(3,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+    .grid-2{display:grid; grid-template-columns:repeat(2,1fr); gap:1px; background:var(--line); border:1px solid var(--line); border-radius:8px; overflow:hidden;}
+    .card{background:var(--bg-1); padding:30px 28px; transition:background .2s;}
+    .card:hover{background:var(--bg-2);}
+    .card .icon{
+      width:38px; height:38px; border:1px solid var(--line-strong); border-radius:6px;
+      display:flex; align-items:center; justify-content:center; margin-bottom:18px; color:var(--signal);
+    }
+    .card h3{margin-bottom:8px;}
+    .card p{font-size:14px;}
+    .tag{
+      display:inline-block; font-family:var(--mono); font-size:10.5px; letter-spacing:.08em; text-transform:uppercase;
+      color:var(--ink-faint); border:1px solid var(--line); border-radius:20px; padding:3px 10px; margin-top:14px;
+    }
+
+    /* ---- steps ---- */
+    .steps{display:flex; flex-direction:column; gap:0;}
+    .step{display:grid; grid-template-columns:64px 1fr; gap:24px; padding:34px 0; border-top:1px solid var(--line);}
+    .step:first-child{border-top:none;}
+    .step-num{font-family:var(--mono); font-size:13px; color:var(--signal); border:1px solid var(--line-strong); width:44px; height:44px; border-radius:50%; display:flex; align-items:center; justify-content:center;}
+    .step h3{margin-bottom:8px;}
+    .step p{max-width:620px; font-size:14.5px;}
+
+    /* ---- tech / infra ---- */
+    .stack-row{display:flex; flex-wrap:wrap; gap:10px; margin-top:22px;}
+    .chip{font-family:var(--mono); font-size:12px; color:var(--ink-dim); border:1px solid var(--line-strong); border-radius:20px; padding:6px 14px; background:rgba(61,255,176,0.03);}
+
+    /* ---- roadmap ---- */
+    .roadmap{position:relative; padding-left:28px; border-left:1px solid var(--line);}
+    .rm-item{position:relative; padding-bottom:36px;}
+    .rm-item:last-child{padding-bottom:0;}
+    .rm-item::before{content:""; position:absolute; left:-33px; top:4px; width:9px; height:9px; border-radius:50%; background:var(--bg); border:2px solid var(--signal-dim);}
+    .rm-item.active::before{background:var(--signal); box-shadow:0 0 10px var(--signal);}
+    .rm-phase{font-family:var(--mono); font-size:11px; color:var(--signal); letter-spacing:.1em; text-transform:uppercase; margin-bottom:4px;}
+    .rm-item p{font-size:14px; max-width:560px;}
+
+    /* ---- testimonial / quote ---- */
+    .quote{border-left:2px solid var(--signal); padding-left:24px; margin-top:8px;}
+    .quote p{font-size:1.05rem; color:var(--ink); font-style:normal;}
+    .quote-attr{font-family:var(--mono); font-size:12px; color:var(--ink-faint); margin-top:10px;}
+
+    /* ---- footer ---- */
+    footer{padding:64px 0 40px;}
+    .footer-top{display:flex; justify-content:space-between; gap:40px; flex-wrap:wrap; padding-bottom:40px; border-bottom:1px solid var(--line);}
+    .footer-cols{display:flex; gap:64px; flex-wrap:wrap;}
+    .footer-col h5{font-family:var(--mono); font-size:11px; letter-spacing:.1em; text-transform:uppercase; color:var(--ink-faint); margin-bottom:14px;}
+    .footer-col a{display:block; font-size:13.5px; color:var(--ink-dim); padding:5px 0;}
+    .footer-col a:hover{color:var(--signal);}
+    .footer-bottom{display:flex; justify-content:space-between; align-items:center; padding-top:26px; flex-wrap:wrap; gap:12px;}
+    .footer-bottom p{font-size:12.5px; color:var(--ink-faint);}
+
+    .cta-band{
+      background:linear-gradient(180deg, rgba(61,255,176,0.06), transparent);
+      text-align:center;
+    }
+    .cta-band .btn-primary{padding:14px 30px; font-size:14.5px;}
+
+    ::selection{background:rgba(61,255,176,0.28); color:#fff;}
+
+    @media (max-width: 920px){
+      .hero-grid{grid-template-columns:1fr;}
+      .stat-row{grid-template-columns:repeat(2,1fr);}
+      .grid-3{grid-template-columns:1fr;}
+      .grid-2{grid-template-columns:1fr;}
+      .problem-grid{grid-template-columns:1fr;}
+      nav.links{display:none;}
+      .menu-toggle{display:flex;}
+      .footer-top{flex-direction:column;}
+    }
+    nav.links.mobile-open{
+      display:flex !important; position:fixed; top:68px; left:0; right:0; bottom:0;
+      background:var(--bg); flex-direction:column; padding:20px; z-index:60; border-top:1px solid var(--line);
+    }
+    nav.links.mobile-open a{padding:16px 6px; font-size:15px; border-bottom:1px solid var(--line);}
+
+/* ---- Interactive demo additions ---- */
+.demo-section{ }
+.demo-tabs{ display:flex; gap:8px; margin-bottom:24px; flex-wrap:wrap; }
+.demo-tab{ font-family:var(--mono); font-size:12.5px; letter-spacing:.04em; text-transform:uppercase; background:var(--panel); border:1px solid var(--line-strong); color:var(--ink-dim); padding:10px 18px; border-radius:3px; cursor:pointer; transition:all .15s ease; }
+.demo-tab:hover{ color:var(--ink); border-color:var(--ink-faint); }
+.demo-tab.active{ color:var(--signal); border-color:var(--signal-dim); background:rgba(61,255,176,.06); }
+.demo-layout{ display:grid; grid-template-columns:260px 1fr; gap:28px; align-items:start; }
+@media (max-width:920px){ .demo-layout{ grid-template-columns:1fr; } }
+.sample-list{ display:flex; flex-direction:column; gap:10px; }
+.sample-card{ display:flex; align-items:center; gap:12px; border:1px solid var(--line-strong); background:var(--panel); border-radius:6px; padding:10px; cursor:pointer; text-align:left; transition:all .15s ease; }
+.sample-card:hover{ border-color:var(--ink-faint); }
+.sample-card.active{ border-color:var(--signal-dim); background:rgba(61,255,176,.05); }
+.sample-thumb{ width:52px; height:52px; border-radius:4px; object-fit:cover; flex-shrink:0; filter:grayscale(.15) contrast(1.05); }
+.sample-meta{ display:flex; flex-direction:column; gap:3px; }
+.sample-meta .name{ font-size:13.5px; color:var(--ink); font-weight:600; }
+.sample-meta .tag-mini{ font-family:var(--mono); font-size:10.5px; color:var(--ink-faint); letter-spacing:.04em; }
+.demo-stage{ border:1px solid var(--line-strong); background:var(--panel); border-radius:8px; overflow:hidden; }
+.demo-stage-head{ display:flex; justify-content:space-between; align-items:center; padding:12px 18px; border-bottom:1px solid var(--line); font-family:var(--mono); font-size:11.5px; color:var(--ink-faint); letter-spacing:.05em; }
+.demo-image-wrap{ position:relative; width:100%; aspect-ratio:16/10; overflow:hidden; background:#000; }
+.demo-image-wrap img{ width:100%; height:100%; object-fit:cover; display:block; filter:saturate(.92) contrast(1.05); }
+.demo-scanline{ position:absolute; left:0; right:0; height:2px; background:linear-gradient(90deg, transparent, var(--signal), transparent); opacity:0; box-shadow:0 0 16px 2px rgba(61,255,176,.6); }
+.demo-scanline.scanning{ animation:scanmove 1.6s linear infinite; opacity:1; }
+@keyframes scanmove{ 0%{ top:0%; } 100%{ top:100%; } }
+.demo-grid-overlay{ position:absolute; inset:0; background-image:linear-gradient(rgba(61,255,176,.08) 1px, transparent 1px), linear-gradient(90deg, rgba(61,255,176,.08) 1px, transparent 1px); background-size:24px 24px; opacity:0; transition:opacity .3s ease; pointer-events:none; }
+.demo-grid-overlay.on{ opacity:1; }
+.demo-flag{ position:absolute; border:1.5px solid var(--alert); box-shadow:0 0 0 1px rgba(255,77,106,.25), inset 0 0 20px rgba(255,77,106,.12); opacity:0; transform:scale(.9); transition:opacity .35s ease, transform .35s ease; pointer-events:none; }
+.demo-flag.show{ opacity:1; transform:scale(1); }
+.demo-flag::after{ content:attr(data-label); position:absolute; top:-22px; left:0; font-family:var(--mono); font-size:9.5px; color:var(--alert); white-space:nowrap; letter-spacing:.03em; }
+.demo-status{ display:flex; align-items:center; gap:10px; padding:14px 18px; font-family:var(--mono); font-size:12px; color:var(--ink-faint); border-bottom:1px solid var(--line); min-height:20px; }
+.demo-status .dot-pulse{ width:7px; height:7px; border-radius:50%; background:var(--ink-faint); flex-shrink:0; }
+.demo-status.busy .dot-pulse{ background:var(--amber); animation:pulse 1s ease-in-out infinite; }
+.demo-status.done-real .dot-pulse{ background:var(--signal); }
+.demo-status.done-fake .dot-pulse{ background:var(--alert); }
+@keyframes pulse{ 0%,100%{ opacity:1; } 50%{ opacity:.3; } }
+.demo-progress-track{ height:3px; background:var(--line); width:100%; overflow:hidden; }
+.demo-progress-fill{ height:100%; width:0%; background:var(--signal); transition:width .1s linear; }
+.demo-result{ padding:20px 18px; }
+.demo-result-row{ display:flex; align-items:baseline; gap:16px; flex-wrap:wrap; }
+.demo-score-num{ font-family:var(--mono); font-size:2.4rem; font-weight:600; transition:color .3s ease; }
+.demo-score-lbl{ font-size:12.5px; color:var(--ink-faint); }
+.demo-explain{ margin-top:14px; font-size:13.5px; color:var(--ink-dim); line-height:1.65; min-height:44px; }
+.demo-run-btn{ margin-top:16px; }
+.bar-mini{ display:inline-flex; gap:2px; align-items:flex-end; height:16px; margin-left:8px; vertical-align:middle; }
+.bar-mini span{ width:3px; background:var(--ink-faint); display:inline-block; animation:barwave 1s ease-in-out infinite; }
+.bar-mini.live span{ background:var(--signal); }
+@keyframes barwave{ 0%,100%{ height:20%; } 50%{ height:100%; } }
+
+/* Before / after slider */
+.compare-wrap{ position:relative; width:100%; max-width:560px; aspect-ratio:4/3; margin:0 auto; border-radius:8px; overflow:hidden; border:1px solid var(--line-strong); user-select:none; }
+.compare-wrap img{ position:absolute; inset:0; width:100%; height:100%; object-fit:cover; display:block; }
+.compare-after{ clip-path:inset(0 0 0 50%); }
+.compare-handle{ position:absolute; top:0; bottom:0; left:50%; width:2px; background:var(--signal); cursor:ew-resize; box-shadow:0 0 10px rgba(61,255,176,.6); }
+.compare-handle::after{ content:'⇔'; position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:36px; height:36px; border-radius:50%; background:var(--signal); color:#03110a; display:flex; align-items:center; justify-content:center; font-size:16px; }
+.compare-label{ position:absolute; top:12px; font-family:var(--mono); font-size:10.5px; letter-spacing:.05em; padding:5px 10px; border-radius:3px; background:rgba(5,7,8,.75); border:1px solid var(--line-strong); }
+.compare-label.left{ left:12px; }
+.compare-label.right{ right:12px; }
+.compare-caption{ text-align:center; margin-top:16px; font-size:13px; color:var(--ink-faint); }
+
+/* Stepper (how it works) */
+.stepper-layout{ display:grid; grid-template-columns:320px 1fr; gap:36px; align-items:start; }
+@media (max-width:920px){ .stepper-layout{ grid-template-columns:1fr; } }
+.stepper-list{ display:flex; flex-direction:column; }
+.stepper-item{ display:flex; gap:16px; padding:16px 4px; cursor:pointer; border-left:2px solid var(--line-strong); padding-left:20px; transition:all .15s ease; opacity:.55; }
+.stepper-item:hover{ opacity:.85; }
+.stepper-item.active{ border-left-color:var(--signal); opacity:1; }
+.stepper-item .step-num{ margin-top:2px; }
+.stepper-item.active .step-num{ border-color:var(--signal); color:var(--signal); }
+.stepper-visual{ border:1px solid var(--line-strong); background:var(--panel); border-radius:8px; padding:28px; min-height:360px; display:flex; flex-direction:column; justify-content:center; gap:18px; }
+.retrain-chart{ display:flex; align-items:flex-end; gap:6px; height:100px; }
+.retrain-chart span{ flex:1; background:linear-gradient(to top, var(--signal-dim), var(--signal)); border-radius:2px 2px 0 0; opacity:.85; }
+
+/* Animated counter respects prefers-reduced-motion via JS check */
+</style>
+</head>
+<body>
+
+  <header class="site">
+    <div class="wrap navrow">
+      <a href="index.html" class="brand"><span class="brand-mark"></span>VERIFAI</a>
+      <nav class="links" id="navLinks">
+        <a href="index.html" class="active">Home</a>
+        <a href="how-it-works.html">How It Works</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="team.html">Team</a>
+      </nav>
+      <div class="navcta">
+        <a href="pricing.html" class="btn btn-ghost btn-sm">Pricing</a>
+        <a href="#waitlist" class="btn btn-primary btn-sm" onclick="return goWaitlist(event)">Request Demo</a>
+        <button class="menu-toggle" id="menuToggle" aria-label="Menu">
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="none"><path d="M1 3H15M1 8H15M1 13H15" stroke="currentColor" stroke-width="1.4"/></svg>
+        </button>
+      </div>
+    </div>
+  </header>
+  <script>
+    function goWaitlist(e){
+      var el = document.getElementById('waitlist');
+      if(el){ e.preventDefault(); el.scrollIntoView({behavior:'smooth'}); }
+      return true;
+    }
+    document.addEventListener('DOMContentLoaded', function(){
+      var t = document.getElementById('menuToggle');
+      var n = document.getElementById('navLinks');
+      if(t && n){ t.addEventListener('click', function(){ n.classList.toggle('mobile-open'); }); }
+    });
+  </script>
+
+  <main>
+    <section class="hero nb">
+      <div class="wrap hero-grid">
+        <div>
+          <div class="eyebrow">Synthetic Media Detection</div>
+          <h1>Is this real, or was it generated?</h1>
+          <p class="lede" style="margin-top:20px;">Verifai scans video, audio, and images for the fingerprints of AI generation &mdash; and tells you exactly what it found, in plain language, in under five seconds.</p>
+          <div class="hero-cta-row">
+            <a href="#waitlist" class="btn btn-primary" onclick="return goWaitlist(event)">Request Demo</a>
+            <a href="how-it-works.html" class="btn btn-ghost">See How It Works</a>
+          </div>
+          <p class="hero-note">Currently onboarding fintech &amp; KYC pilot teams &nbsp;·&nbsp; MVP in active development</p>
+        </div>
+        <div class="scan-panel">
+          <div class="scan-panel-head">
+            <span>ANALYSIS_2481.MP4</span>
+            <div class="dots"><span></span><span></span><span></span></div>
+          </div>
+          <div class="scan-body">
+            <div class="scan-frame">
+              <div class="flag-box" data-label="MOUTH REGION 0:42" style="left:32%; top:44%; width:26%; height:22%;"></div>
+              <div class="flag-box" data-label="LIGHTING EDGE" style="left:8%; top:14%; width:18%; height:14%;"></div>
+            </div>
+            <div class="readout">
+              <div class="readout-score">
+                <div class="num">92%</div>
+                <div class="lbl">Synthetic Likelihood</div>
+              </div>
+              <div class="readout-bars">
+                <span style="height:40%;"></span><span style="height:70%;"></span><span style="height:30%;"></span>
+                <span style="height:85%;"></span><span style="height:55%;"></span><span style="height:95%;"></span>
+                <span style="height:45%;"></span><span style="height:65%;"></span>
+              </div>
+            </div>
+            <div class="verdict"><b>Flagged &mdash;</b> face-swap boundary artifacts detected around the mouth region, 0:42&ndash;0:47. Lip-sync mismatch confidence: high.</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="wrap">
+        <div class="stat-row">
+          <div class="stat-cell"><div class="num">&gt;95%</div><div class="lbl">Target accuracy on known generator families</div></div>
+          <div class="stat-cell"><div class="num">&lt;5s</div><div class="lbl">Image &amp; short-audio analysis time</div></div>
+          <div class="stat-cell"><div class="num">&lt;60s</div><div class="lbl">Full analysis of a 5-minute video</div></div>
+          <div class="stat-cell"><div class="num">14 days</div><div class="lbl">Target turnaround to retrain on a new generator family</div></div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="live-demo">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Try It Yourself</div>
+          <h2>Run a live analysis on a sample file.</h2>
+          <p class="lede" style="margin-top:16px;">Pick a sample below and run it through the same pipeline that powers Verifai &mdash; scanning, scoring, and explaining, right in your browser.</p>
+        </div>
+
+        <div class="demo-tabs">
+          <button class="demo-tab active" data-modality="image" onclick="switchModality('image', this)">Image</button>
+          <button class="demo-tab" data-modality="video" onclick="switchModality('video', this)">Video / Selfie</button>
+          <button class="demo-tab" data-modality="audio" onclick="switchModality('audio', this)">Audio</button>
+        </div>
+
+        <div class="demo-layout">
+          <div class="sample-list" id="sampleList"></div>
+
+          <div class="demo-stage">
+            <div class="demo-stage-head">
+              <span id="stageFileName">SAMPLE_01.JPG</span>
+              <span id="stageDims">1024×1024</span>
+            </div>
+            <div class="demo-image-wrap">
+              <img id="stageImg" src="assets/sample_face_real.jpg" alt="Sample media for analysis">
+              <div class="demo-grid-overlay" id="stageGrid"></div>
+              <div class="demo-scanline" id="stageScan"></div>
+              <div id="flagLayer"></div>
+            </div>
+            <div class="demo-status" id="stageStatus"><span class="dot-pulse"></span><span id="stageStatusText">Ready. Select a sample and run analysis.</span></div>
+            <div class="demo-progress-track"><div class="demo-progress-fill" id="stageProgress"></div></div>
+            <div class="demo-result">
+              <div class="demo-result-row">
+                <div class="demo-score-num" id="stageScoreNum" style="color:var(--ink-faint);">--%</div>
+                <div class="demo-score-lbl">Synthetic Likelihood</div>
+              </div>
+              <p class="demo-explain" id="stageExplain">No analysis run yet.</p>
+              <button class="btn btn-primary demo-run-btn" id="runBtn" onclick="runAnalysis()">Run Analysis</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="problem">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">The Problem</div>
+          <h2>Generative AI now produces near-perfect fakes.</h2>
+          <p class="lede" style="margin-top:16px;">Diffusion models, voice cloning, and face-swap tools are good enough to fool a human on casual viewing &mdash; and every detector trained on last year's generator quietly goes stale against this year's.</p>
+        </div>
+        <div class="problem-grid">
+          <div class="problem-cell">
+            <h4>Who Gets Hurt</h4>
+            <p>Banks running identity verification, insurers reviewing claims, dating platforms fighting catfishing, newsrooms verifying footage, and courts protecting evidence integrity &mdash; all lack a dependable "is this real?" check.</p>
+          </div>
+          <div class="problem-cell">
+            <h4>Why It's Getting Worse</h4>
+            <p>New generator models ship every month, and each one degrades existing detector accuracy further. This is a moving target, not a solved problem &mdash; and most detectors are static models that decay the day they ship.</p>
+          </div>
+          <div class="problem-cell">
+            <h4>Why Existing Tools Fail</h4>
+            <p>Most detectors handle only one modality &mdash; just video, or just audio &mdash; and return a bare score with no explanation of what triggered it. That's not enough for a compliance team that has to justify a decision.</p>
+          </div>
+          <div class="problem-cell">
+            <h4>The Cost of Getting It Wrong</h4>
+            <p>In KYC and legal contexts, a missed fake lets fraud through &mdash; and a false positive wrongly blocks a real customer. Both failure modes carry direct financial and reputational cost.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="solution">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">The Solution</div>
+          <h2>Multi-modal detection that retrains as fast as the fakes evolve.</h2>
+          <p class="lede" style="margin-top:16px;">Verifai combines video, audio, and image classifiers with a continuous retraining pipeline that ingests new synthetic-media samples the moment new generators appear &mdash; so accuracy doesn't decay over time.</p>
+        </div>
+        <div class="steps">
+          <div class="step">
+            <div class="step-num mono">01</div>
+            <div><h3>Ingest</h3><p>Upload a file through the web app, or stream media directly via the API.</p></div>
+          </div>
+          <div class="step">
+            <div class="step-num mono">02</div>
+            <div><h3>Analyze</h3><p>Multi-modal models scan for generation artifacts &mdash; frequency-domain inconsistencies, lip-sync mismatch, unnatural blinking, voice-clone spectral signatures.</p></div>
+          </div>
+          <div class="step">
+            <div class="step-num mono">03</div>
+            <div><h3>Score</h3><p>Returns a confidence score from 0&ndash;100% likelihood of being synthetic, with flagged timestamps and regions.</p></div>
+          </div>
+          <div class="step">
+            <div class="step-num mono">04</div>
+            <div><h3>Explain</h3><p>A plain-language explanation of exactly what triggered the flag &mdash; e.g. "audio pitch inconsistency at 0:42&ndash;0:47."</p></div>
+          </div>
+          <div class="step">
+            <div class="step-num mono">05</div>
+            <div><h3>Retrain</h3><p>Confirmed fake and real samples continuously feed back into retraining, so the model keeps pace with new generators.</p></div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="ai-technology">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">AI Technology</div>
+          <h2>Purpose-built models for each modality, not a generic classifier.</h2>
+          <p class="lede" style="margin-top:16px;">Detection is fundamentally an arms race. Verifai is built from day one to retrain continuously against new generators, rather than shipping a static model that decays.</p>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <div class="icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="1" y="4" width="16" height="10" rx="1.5" stroke="currentColor" stroke-width="1.3"/><path d="M6 9h6M9 6v6" stroke="currentColor" stroke-width="1.3"/></svg></div>
+            <h3>Video Artifact Classifier</h3>
+            <p>CNN/transformer-based model detecting blending boundaries, unnatural motion, and lighting inconsistency frame-by-frame.</p>
+            <span class="tag">Frame-level detection</span>
+          </div>
+          <div class="card">
+            <div class="icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M2 9c1-4 2-4 3 0s2 4 3 0 2-4 3 0 2 4 3 0 2-4 3 0" stroke="currentColor" stroke-width="1.3" fill="none"/></svg></div>
+            <h3>Audio Spectral Classifier</h3>
+            <p>Detects voice-cloning artifacts in pitch, prosody, and frequency signatures that don't occur in natural speech.</p>
+            <span class="tag">Spectral analysis</span>
+          </div>
+          <div class="card">
+            <div class="icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><circle cx="9" cy="9" r="6.5" stroke="currentColor" stroke-width="1.3"/><path d="M9 4v10M4 9h10" stroke="currentColor" stroke-width="1"/></svg></div>
+            <h3>Image Frequency-Domain Model</h3>
+            <p>Detects diffusion and GAN fingerprints invisible to the human eye, using frequency-domain analysis.</p>
+            <span class="tag">GAN fingerprinting</span>
+          </div>
+          <div class="card">
+            <div class="icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M3 14V8M9 14V4M15 14v-6" stroke="currentColor" stroke-width="1.3"/></svg></div>
+            <h3>Explainability Module</h3>
+            <p>Generates human-readable rationale from model attention and activation maps &mdash; not just a raw score.</p>
+            <span class="tag">Attention maps</span>
+          </div>
+          <div class="card">
+            <div class="icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><path d="M15 9a6 6 0 1 1-1.76-4.24" stroke="currentColor" stroke-width="1.3"/><path d="M15 3v4h-4" stroke="currentColor" stroke-width="1.3"/></svg></div>
+            <h3>Continuous Retraining Pipeline</h3>
+            <p>An always-on MLOps loop that retrains and redeploys models as new generator families emerge &mdash; the core defensibility of the product.</p>
+            <span class="tag">Core defensibility</span>
+          </div>
+          <div class="card">
+            <div class="icon"><svg width="18" height="18" viewBox="0 0 18 18" fill="none"><rect x="2" y="2" width="14" height="14" rx="2" stroke="currentColor" stroke-width="1.3"/><path d="M6 9h6" stroke="currentColor" stroke-width="1.3"/></svg></div>
+            <h3>Model Changelog</h3>
+            <p>Every model version ships with a changelog showing exactly which generator families it can detect.</p>
+            <span class="tag">Versioned deployment</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    
+    <section id="spot-the-fake" class="nb">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Can You Spot It?</div>
+          <h2>One of these faces doesn't exist.</h2>
+          <p class="lede" style="margin-top:16px;">Drag the divider. Verifai's frequency-domain model catches the fingerprint your eyes can't &mdash; blending seams, texture mismatch, and inconsistent lighting on the synthetic side.</p>
+        </div>
+        <div class="compare-wrap" id="compareWrap">
+          <img src="assets/sample_face_real.jpg" alt="Real photograph">
+          <img src="assets/sample_face_synthetic.jpg" alt="AI-generated face" class="compare-after" id="compareAfter">
+          <div class="compare-label left">REAL</div>
+          <div class="compare-label right">AI-GENERATED</div>
+          <div class="compare-handle" id="compareHandle"></div>
+        </div>
+        <p class="compare-caption">Left: unmodified photograph. Right: synthetic face-swap flagged at 92% likelihood by Verifai.</p>
+      </div>
+    </section>
+
+    <section id="features">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Product Features</div>
+          <h2>Everything a compliance or trust &amp; safety team needs to act on a result.</h2>
+        </div>
+        <div class="grid-3">
+          <div class="card">
+            <h3>Upload &amp; Analyze</h3>
+            <p>Drag-and-drop upload for video, audio, or image files, with a live progress indicator during analysis.</p>
+          </div>
+          <div class="card">
+            <h3>Explainability Layer</h3>
+            <p>Heatmap overlay on flagged frames, timestamped audio flags with waveform annotation, and a human-readable summary.</p>
+          </div>
+          <div class="card">
+            <h3>REST API</h3>
+            <p>Programmatic upload and analysis for KYC, claims, and moderation pipelines, with webhook callbacks on completion.</p>
+          </div>
+          <div class="card">
+            <h3>Case &amp; History Dashboard</h3>
+            <p>Every analysis is stored per user or org, with an exportable PDF report for compliance and legal use.</p>
+          </div>
+          <div class="card">
+            <h3>API Key Management</h3>
+            <p>Issue and rotate API keys with a built-in usage dashboard for every integration.</p>
+          </div>
+          <div class="card">
+            <h3>Live-Stream Detection <span class="tag" style="margin:0 0 0 6px; vertical-align:middle;">Phase 2</span></h3>
+            <p>Real-time analysis for video calls, so a live KYC session can be verified as it happens.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="infrastructure">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Technology &amp; Infrastructure</div>
+          <h2>Cloud and GPU infrastructure built for continuous retraining.</h2>
+          <p class="lede" style="margin-top:16px;">Video and audio inference are GPU-heavy, and the retraining loop never stops. This is a genuine, ongoing compute workload &mdash; not an LLM wrapper.</p>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>How We Use AWS</h3>
+            <p style="margin-top:10px;">We use AWS to host our REST API (API Gateway + Lambda), run GPU-backed inference for video, audio, and image models (EC2 G5/P-series or SageMaker endpoints), store uploaded media and training datasets in S3, queue large video jobs with SQS, and deliver results via CloudFront. User accounts, analysis history, and API keys live in RDS or DynamoDB.</p>
+            <div class="stack-row">
+              <span class="chip">S3</span><span class="chip">SageMaker</span><span class="chip">EC2 G5/P-series</span>
+              <span class="chip">Lambda</span><span class="chip">API Gateway</span><span class="chip">SQS</span>
+              <span class="chip">CloudFront</span><span class="chip">RDS</span>
+            </div>
+          </div>
+          <div class="card">
+            <h3>How We Use NVIDIA</h3>
+            <p style="margin-top:10px;">We plan to use NVIDIA technologies to accelerate model training and inference for our computer-vision and audio classifiers, optimize real-time throughput for video analysis, and scale GPU capacity as retraining frequency increases with new generator families.</p>
+            <div class="stack-row">
+              <span class="chip">CUDA</span><span class="chip">TensorRT</span><span class="chip">Triton Inference Server</span>
+              <span class="chip">GPU-accelerated training</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="market">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Market Opportunity</div>
+          <h2>Focused on the industries with the most to lose from a fake.</h2>
+        </div>
+        <div class="grid-2">
+          <div class="card">
+            <h3>Target Users</h3>
+            <p style="margin-top:10px;"><b style="color:var(--ink);">Primary (MVP):</b> Fintech and KYC teams verifying identity documents and selfie-video liveness checks.<br><br><b style="color:var(--ink);">Secondary:</b> Insurance fraud investigators reviewing claim media.<br><br><b style="color:var(--ink);">Tertiary:</b> Dating platforms, trust &amp; safety teams, and independent newsrooms verifying footage.</p>
+          </div>
+          <div class="card">
+            <h3>Revenue Model &amp; Growth</h3>
+            <p style="margin-top:10px;">Subscription pricing by monthly analysis volume, with a free trial tier for evaluation and custom enterprise contracts for unlimited-volume, SLA-backed deployments. Beta goal: 20 paying pilot customers within 3 months of launch.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="why-now">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Why Now</div>
+          <h2>The window to build a defensible detector is closing.</h2>
+        </div>
+        <div class="quote">
+          <p>Generator models are released monthly, and every release degrades existing detectors a little more. The only durable answer is a detection system designed from day one to keep retraining &mdash; not a static model shipped once and left to decay. Every quarter this problem goes unsolved, more fraud, more misinformation, and more wrongly-trusted media makes it through.</p>
+        </div>
+      </div>
+    </section>
+
+    <section id="traction">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Traction &amp; MVP Status</div>
+          <h2>Early, and moving fast.</h2>
+        </div>
+        <div class="grid-3">
+          <div class="card"><h3>MVP In Development</h3><p>Phase 1 build underway: web upload, video and image detection, basic dashboard, and report export.</p></div>
+          <div class="card"><h3>Pilot Outreach</h3><p>Currently in conversation with fintech and KYC teams for early pilot access ahead of Phase 1 completion.</p></div>
+          <div class="card"><h3>Founder-Led Build</h3><p>Built by a technical founding team with direct experience in computer vision and applied ML.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="roadmap">
+      <div class="wrap">
+        <div class="section-head">
+          <div class="eyebrow">Roadmap</div>
+          <h2>Three phases, twenty weeks.</h2>
+        </div>
+        <div class="roadmap">
+          <div class="rm-item active">
+            <div class="rm-phase">Phase 1 &middot; Weeks 1&ndash;6</div>
+            <h3>MVP</h3>
+            <p>Web upload, video and image detection, basic case dashboard, results and report export.</p>
+          </div>
+          <div class="rm-item">
+            <div class="rm-phase">Phase 2 &middot; Weeks 7&ndash;12</div>
+            <h3>API &amp; Audio</h3>
+            <p>Audio detection, full REST API, and version 1 of the continuous retraining pipeline.</p>
+          </div>
+          <div class="rm-item">
+            <div class="rm-phase">Phase 3 &middot; Weeks 13&ndash;20</div>
+            <h3>Scale &amp; Compliance</h3>
+            <p>Live-stream detection, batch processing for large media archives, and enterprise compliance controls.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section id="waitlist" class="cta-band nb">
+      <div class="wrap" style="max-width:640px;">
+        <div class="eyebrow" style="justify-content:center;">Get Access</div>
+        <h2>See what Verifai flags in your own media.</h2>
+        <p class="lede" style="margin:16px auto 0; text-align:center;">Join the pilot waitlist or request a live demo &mdash; we're onboarding fintech and KYC teams first.</p>
+        <form id="waitlistForm" style="margin-top:32px; display:flex; gap:10px; justify-content:center; flex-wrap:wrap;" onsubmit="return submitWaitlist(event)">
+          <input required type="email" placeholder="you@company.com" style="font-family:var(--mono); font-size:13.5px; background:var(--panel); border:1px solid var(--line-strong); border-radius:3px; padding:12px 16px; color:var(--ink); min-width:260px;">
+          <button type="submit" class="btn btn-primary">Request Demo</button>
+        </form>
+        <p id="waitlistMsg" class="hero-note" style="text-align:center;"></p>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <div class="footer-top">
+        <div style="max-width:280px;">
+          <a href="index.html" class="brand"><span class="brand-mark"></span>VERIFAI</a>
+          <p style="margin-top:14px; font-size:13.5px;">Multi-modal deepfake and synthetic media detection, continuously retrained against the newest generator models.</p>
+        </div>
+        <div class="footer-cols">
+          <div class="footer-col">
+            <h5>Product</h5>
+            <a href="index.html">Overview</a>
+            <a href="how-it-works.html">How It Works</a>
+            <a href="pricing.html">Pricing</a>
+          </div>
+          <div class="footer-col">
+            <h5>Company</h5>
+            <a href="team.html">Team</a>
+            <a href="mailto:hello@verifai.ai">Contact</a>
+            <a href="index.html#waitlist">Request Demo</a>
+          </div>
+          <div class="footer-col">
+            <h5>Legal</h5>
+            <a href="privacy.html">Privacy Policy</a>
+            <a href="terms.html">Terms of Use</a>
+          </div>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; 2026 Verifai Technologies Ltd. Built by Verifai Technologies Ltd.</p>
+        <p class="mono">hello@verifai.ai &nbsp;·&nbsp; verifai.ai</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    function submitWaitlist(e){
+      e.preventDefault();
+      document.getElementById('waitlistMsg').textContent = "Thanks — we'll be in touch at that address shortly.";
+      e.target.reset();
+      return false;
+    }
+  </script>
+
+  <script>
+    const SAMPLES = {
+      image: [
+        { id:'img1', name:'Portrait A', file:'assets/sample_face_real.jpg', dims:'1024×1024', real:true,
+          flags:[], explain:'No blending seams or frequency-domain artifacts detected. Texture, lighting, and noise pattern are consistent across the full frame.' },
+        { id:'img2', name:'Portrait B', file:'assets/sample_face_synthetic.jpg', dims:'1024×1024', real:false,
+          flags:[{label:'JAWLINE SEAM', left:14, top:48, w:34, h:30},{label:'LIGHTING MISMATCH', left:52, top:12, w:30, h:22}],
+          explain:'Blending-boundary artifact detected along the jawline, with a skin-tone discontinuity. Lighting direction on the face is inconsistent with the background.' },
+      ],
+      video: [
+        { id:'vid1', name:'KYC Selfie Check', file:'assets/sample_kyc_video.jpg', dims:'1280×720 · 0:12', real:true,
+          flags:[], explain:'Natural blink rate, consistent lighting across frames, and no lip-sync mismatch detected. Passes liveness check.' },
+        { id:'vid2', name:'Selfie Check (flagged)', file:'assets/sample_kyc_video.jpg', dims:'1280×720 · 0:09', real:false,
+          flags:[{label:'LIP-SYNC MISMATCH', left:36, top:46, w:26, h:26},{label:'UNNATURAL BLINK', left:30, top:18, w:20, h:14}],
+          explain:'Lip-sync mismatch detected between 0:04–0:07. Blink cadence deviates from natural baseline — consistent with a face-reenactment deepfake.' },
+      ],
+      audio: [
+        { id:'aud1', name:'Voice Memo A', file:'assets/audio_waveform.jpg', dims:'00:38 · 44.1kHz', real:true,
+          flags:[], explain:'Spectral and prosody analysis show natural pitch variance. No voice-clone signature detected.' },
+        { id:'aud2', name:'Voice Memo B (flagged)', file:'assets/audio_waveform.jpg', dims:'00:24 · 44.1kHz', real:false,
+          flags:[{label:'PITCH ARTIFACT', left:22, top:30, w:28, h:40},{label:'SPECTRAL GAP', left:58, top:20, w:22, h:30}],
+          explain:'Unnatural pitch flattening and a spectral gap consistent with voice-cloning synthesis detected between 0:11–0:16.' },
+      ],
+    };
+    let currentModality = 'image';
+    let currentSample = SAMPLES.image[0];
+    let analyzing = false;
+
+    function renderSampleList(){
+      const list = document.getElementById('sampleList');
+      list.innerHTML = '';
+      SAMPLES[currentModality].forEach(function(s, i){
+        const card = document.createElement('button');
+        card.className = 'sample-card' + (s.id === currentSample.id ? ' active' : '');
+        card.onclick = function(){ selectSample(s, card); };
+        card.innerHTML = '<img class="sample-thumb" src="' + s.file + '" alt="' + s.name + '">' +
+          '<span class="sample-meta"><span class="name">' + s.name + '</span><span class="tag-mini">' + (i===0 ? 'CONTROL SAMPLE' : 'TEST SAMPLE') + '</span></span>';
+        list.appendChild(card);
+      });
+    }
+
+    function selectSample(s, cardEl){
+      if(analyzing) return;
+      currentSample = s;
+      document.querySelectorAll('.sample-card').forEach(function(c){ c.classList.remove('active'); });
+      if(cardEl) cardEl.classList.add('active');
+      resetStage();
+    }
+
+    function switchModality(mod, btn){
+      if(analyzing) return;
+      currentModality = mod;
+      currentSample = SAMPLES[mod][0];
+      document.querySelectorAll('.demo-tab').forEach(function(t){ t.classList.remove('active'); });
+      btn.classList.add('active');
+      renderSampleList();
+      resetStage();
+    }
+
+    function resetStage(){
+      document.getElementById('stageImg').src = currentSample.file;
+      document.getElementById('stageFileName').textContent = currentSample.name.toUpperCase().replace(/ /g,'_') + (currentModality==='image' ? '.JPG' : currentModality==='video' ? '.MP4' : '.WAV');
+      document.getElementById('stageDims').textContent = currentSample.dims;
+      document.getElementById('stageScan').classList.remove('scanning');
+      document.getElementById('stageGrid').classList.remove('on');
+      document.getElementById('flagLayer').innerHTML = '';
+      document.getElementById('stageStatus').className = 'demo-status';
+      document.getElementById('stageStatusText').textContent = 'Ready. Select a sample and run analysis.';
+      document.getElementById('stageProgress').style.width = '0%';
+      document.getElementById('stageScoreNum').textContent = '--%';
+      document.getElementById('stageScoreNum').style.color = 'var(--ink-faint)';
+      document.getElementById('stageExplain').textContent = 'No analysis run yet.';
+      document.getElementById('runBtn').disabled = false;
+      document.getElementById('runBtn').textContent = 'Run Analysis';
+    }
+
+    function runAnalysis(){
+      if(analyzing) return;
+      analyzing = true;
+      const s = currentSample;
+      const runBtn = document.getElementById('runBtn');
+      runBtn.disabled = true;
+      runBtn.textContent = 'Analyzing…';
+      document.getElementById('flagLayer').innerHTML = '';
+      document.getElementById('stageScoreNum').textContent = '--%';
+      document.getElementById('stageScoreNum').style.color = 'var(--ink-faint)';
+      document.getElementById('stageExplain').textContent = '';
+      const statusEl = document.getElementById('stageStatus');
+      statusEl.className = 'demo-status busy';
+      document.getElementById('stageStatusText').textContent = 'Scanning frame data…';
+      document.getElementById('stageScan').classList.add('scanning');
+      document.getElementById('stageGrid').classList.add('on');
+
+      let pct = 0;
+      const fill = document.getElementById('stageProgress');
+      const stages = ['Scanning frame data…','Running frequency-domain analysis…','Cross-checking model ensemble…','Computing confidence score…'];
+      const interval = setInterval(function(){
+        pct += Math.random() * 14 + 6;
+        if(pct >= 100){ pct = 100; clearInterval(interval); finishAnalysis(s); }
+        fill.style.width = pct + '%';
+        const stageIdx = Math.min(stages.length - 1, Math.floor((pct/100) * stages.length));
+        document.getElementById('stageStatusText').textContent = stages[stageIdx];
+      }, 220);
+    }
+
+    function finishAnalysis(s){
+      document.getElementById('stageScan').classList.remove('scanning');
+      const scoreEl = document.getElementById('stageScoreNum');
+      const targetScore = s.real ? Math.floor(Math.random()*6)+2 : Math.floor(Math.random()*8)+88;
+      let shown = 0;
+      const scoreInterval = setInterval(function(){
+        shown += Math.ceil((targetScore - shown) / 4) || (targetScore > shown ? 1 : -1);
+        if((targetScore >= shown && shown >= targetScore) || Math.abs(targetScore-shown) < 1){ shown = targetScore; clearInterval(scoreInterval); }
+        scoreEl.textContent = shown + '%';
+        scoreEl.style.color = shown > 60 ? 'var(--alert)' : 'var(--signal)';
+      }, 40);
+
+      s.flags.forEach(function(f, i){
+        setTimeout(function(){
+          const box = document.createElement('div');
+          box.className = 'demo-flag';
+          box.setAttribute('data-label', f.label);
+          box.style.left = f.left + '%';
+          box.style.top = f.top + '%';
+          box.style.width = f.w + '%';
+          box.style.height = f.h + '%';
+          document.getElementById('flagLayer').appendChild(box);
+          requestAnimationFrame(function(){ box.classList.add('show'); });
+        }, 300 + i * 250);
+      });
+
+      const statusEl = document.getElementById('stageStatus');
+      statusEl.className = 'demo-status ' + (s.real ? 'done-real' : 'done-fake');
+      document.getElementById('stageStatusText').textContent = s.real ? 'Analysis complete — no manipulation detected.' : 'Analysis complete — flagged as likely synthetic.';
+      document.getElementById('stageExplain').textContent = s.explain;
+      document.getElementById('runBtn').disabled = false;
+      document.getElementById('runBtn').textContent = 'Run Again';
+      analyzing = false;
+    }
+
+    renderSampleList();
+
+    // Before / after compare slider
+    (function(){
+      const wrap = document.getElementById('compareWrap');
+      const after = document.getElementById('compareAfter');
+      const handle = document.getElementById('compareHandle');
+      if(!wrap) return;
+      let dragging = false;
+      function setPos(clientX){
+        const rect = wrap.getBoundingClientRect();
+        let pct = ((clientX - rect.left) / rect.width) * 100;
+        pct = Math.max(4, Math.min(96, pct));
+        after.style.clipPath = 'inset(0 0 0 ' + pct + '%)';
+        handle.style.left = pct + '%';
+      }
+      handle.addEventListener('mousedown', function(){ dragging = true; });
+      window.addEventListener('mouseup', function(){ dragging = false; });
+      window.addEventListener('mousemove', function(e){ if(dragging) setPos(e.clientX); });
+      handle.addEventListener('touchstart', function(){ dragging = true; }, {passive:true});
+      window.addEventListener('touchend', function(){ dragging = false; });
+      window.addEventListener('touchmove', function(e){ if(dragging && e.touches[0]) setPos(e.touches[0].clientX); }, {passive:true});
+      wrap.addEventListener('click', function(e){ setPos(e.clientX); });
+    })();
+
+    // Animated stat counters on scroll into view
+    (function(){
+      const cells = document.querySelectorAll('.stat-cell .num');
+      if(!cells.length || !('IntersectionObserver' in window)) return;
+      const parsed = Array.from(cells).map(function(el){
+        const raw = el.textContent.trim();
+        const m = raw.match(/([\d.]+)/);
+        return { el: el, raw: raw, target: m ? parseFloat(m[1]) : null, prefix: raw.split(m ? m[1] : '')[0] || '', suffix: raw.slice((m ? (raw.indexOf(m[1]) + m[1].length) : raw.length)) };
+      });
+      const obs = new IntersectionObserver(function(entries){
+        entries.forEach(function(entry){
+          if(!entry.isIntersecting) return;
+          const item = parsed.find(function(p){ return p.el === entry.target; });
+          if(item && item.target !== null){
+            let val = 0;
+            const step = Math.max(item.target / 30, 0.3);
+            const tick = setInterval(function(){
+              val += step;
+              if(val >= item.target){ val = item.target; clearInterval(tick); }
+              const display = Number.isInteger(item.target) ? Math.round(val) : val.toFixed(1);
+              item.el.textContent = item.prefix + display + item.suffix;
+            }, 25);
+          }
+          obs.unobserve(entry.target);
+        });
+      }, { threshold: 0.4 });
+      cells.forEach(function(el){ obs.observe(el); });
+    })();
+  </script>
+
+</body>
+</html>
