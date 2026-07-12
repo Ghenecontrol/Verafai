@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Contact — Verifai</title>
+<title>Contact — Verafai</title>
 <style>
 
   :root{
@@ -86,7 +86,13 @@
   .mobile-toggle{display:none;}
   @media (max-width:860px){
     .nav-links{display:none;}
-    nav{padding:16px 20px;}
+    .nav-right{display:none;}
+    nav{padding:14px 20px;}
+    .logo{font-size:14px;}
+  }
+  @media (max-width:400px){
+    .logo{font-size:13px; gap:8px;}
+    .logo-mark{width:20px; height:20px;}
   }
 
   /* EYEBROW */
@@ -672,7 +678,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
   <nav>
     <div class="logo">
       <div class="logo-mark"><span></span></div>
-      VERIFAI
+      VERAFAI
     </div>
     <div class="nav-links">
       <a href="index.html" class="nav-link">Home</a>
@@ -682,7 +688,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
     </div>
     <div class="nav-right">
       <a class="btn btn-ghost" href="pricing.html">Pricing</a>
-      <a class="btn btn-solid" href="#contact-form">Request Demo</a>
+      <a class="btn btn-solid" href="#contact-form">Start Free Trial</a>
     </div>
     <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><span></span><span></span><span></span></button>
   </nav>
@@ -691,7 +697,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
     <a href="how-it-works.html">How It Works</a>
     <a href="pricing.html">Pricing</a>
     <a href="contact.html">Contact</a>
-    <a href="#contact-form">Request Demo</a>
+    <a href="#contact-form">Start Free Trial</a>
   </div>
 </header>
 
@@ -703,7 +709,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
     <div class="page-hero-grid">
       <div>
         <div class="eyebrow"><span class="dot"></span>Get In Touch</div>
-        <h1 class="h1" style="font-size:clamp(36px,5vw,58px);">Talk to the team building Verifai.</h1>
+        <h1 class="h1" style="font-size:clamp(36px,5vw,58px);">Talk to the team building Verafai.</h1>
         <p class="lede lede-wide">Whether you want a live walkthrough on your own media, a question about pricing, or you're a KYC team ready to pilot — we read every message ourselves. No sales queue.</p>
         <div class="hero-ctas">
           <a class="btn btn-solid" href="#contact-form">Send A Message</a>
@@ -711,7 +717,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
         </div>
       </div>
       <div class="page-photo">
-        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=900&h=700&fit=crop&q=80" alt="Verifai founding team working on the detection pipeline">
+        <img src="https://images.unsplash.com/photo-1600880292203-757bb62b4baf?w=900&h=700&fit=crop&q=80" alt="Verafai founding team working on the detection pipeline">
         <div class="page-photo-tag">Founder-Led Support</div>
       </div>
     </div>
@@ -751,7 +757,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
           </div>
           <div class="form-row">
             <label for="cMessage">Message</label>
-            <textarea class="form-textarea" id="cMessage" placeholder="What are you hoping Verifai can verify for you?" required></textarea>
+            <textarea class="form-textarea" id="cMessage" placeholder="What are you hoping Verafai can verify for you?" required></textarea>
           </div>
           <button class="btn btn-solid submit-btn" type="submit" id="submitBtn" style="width:100%; justify-content:center;">Send Message</button>
           <div class="form-status" id="formStatus"></div>
@@ -759,28 +765,28 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
       </div>
 
       <div class="contact-info-col">
-        <div class="contact-channel" data-copy="hello@verifai.ai">
+        <div class="contact-channel" data-copy="hello@verafai.ai">
           <div class="cc-icon">✉</div>
           <div>
             <h5>General &amp; Sales</h5>
             <p>For demos, pricing, and pilot access.</p>
-            <span class="cc-val">hello@verifai.ai</span>
+            <span class="cc-val">hello@verafai.ai</span>
           </div>
         </div>
-        <div class="contact-channel" data-copy="support@verifai.ai">
+        <div class="contact-channel" data-copy="support@verafai.ai">
           <div class="cc-icon">◔</div>
           <div>
             <h5>Technical Support</h5>
             <p>API integration, bugs, and account issues.</p>
-            <span class="cc-val">support@verifai.ai</span>
+            <span class="cc-val">support@verafai.ai</span>
           </div>
         </div>
-        <div class="contact-channel" data-copy="press@verifai.ai">
+        <div class="contact-channel" data-copy="press@verafai.ai">
           <div class="cc-icon">▤</div>
           <div>
             <h5>Press &amp; Media</h5>
             <p>Interview requests and press inquiries.</p>
-            <span class="cc-val">press@verifai.ai</span>
+            <span class="cc-val">press@verafai.ai</span>
           </div>
         </div>
         <div class="contact-channel" data-copy="Response time: within 1 business day">
@@ -800,7 +806,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
     <h2 class="h2">A few things people usually ask first.</h2>
     <div class="faq-list">
       <div class="faq-item open">
-        <div class="faq-q"><span>Can I test Verifai before talking to sales?</span><span class="faq-icon">+</span></div>
+        <div class="faq-q"><span>Can I test Verafai before talking to sales?</span><span class="faq-icon">+</span></div>
         <div class="faq-a"><div class="faq-a-inner">Yes — the <a href="index.html#try-it" style="color:var(--mint);">live demo on our homepage</a> runs real sample files through the actual detection pipeline, no account required. The Pilot plan also includes 50 free analyses a month on your own media.</div></div>
       </div>
       <div class="faq-item">
@@ -817,7 +823,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
   <!-- CTA -->
   <section class="wrap cta-section fade-up">
     <div class="eyebrow"><span class="dot"></span>Still Deciding?</div>
-    <h2 class="h2">See what Verifai flags in your own media first.</h2>
+    <h2 class="h2">See what Verafai flags in your own media first.</h2>
     <p class="lede lede-wide">No form required — run a real sample through the pipeline right now.</p>
     <div class="hero-ctas" style="justify-content:center;">
       <a class="btn btn-solid" href="index.html#try-it">Try The Live Demo</a>
@@ -831,7 +837,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
   <div class="wrap">
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="logo"><div class="logo-mark"><span></span></div>VERIFAI</div>
+        <div class="logo"><div class="logo-mark"><span></span></div>VERAFAI</div>
         <p>Multi-modal deepfake and synthetic media detection, continuously retrained against the newest generator models.</p>
         <div class="footer-contact">
           <span><span class="fc-icon">&#128205;</span>21 Oranye Street</span>
@@ -848,7 +854,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
         <div class="footer-col-title">Company</div>
         <a href="index.html#team">Team</a>
         <a href="contact.html">Contact</a>
-        <a href="index.html#get-access">Request Demo</a>
+        <a href="index.html#get-access">Start Free Trial</a>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Legal</div>
@@ -857,8 +863,8 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© <span class="auto-year">2026</span> Verifai Technologies Ltd. Built by Verifai Technologies Ltd.</span>
-      <span>hello@verifai.ai · verifai.ai</span>
+      <span>© <span class="auto-year">2026</span> Verafai Technologies Ltd. Built by Verafai Technologies Ltd.</span>
+      <span>hello@verafai.ai · verafai.ai</span>
     </div>
   </div>
 </footer>
