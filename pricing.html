@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pricing — Verifai</title>
+<title>Pricing — Verafai</title>
 <style>
 
   :root{
@@ -86,7 +86,13 @@
   .mobile-toggle{display:none;}
   @media (max-width:860px){
     .nav-links{display:none;}
-    nav{padding:16px 20px;}
+    .nav-right{display:none;}
+    nav{padding:14px 20px;}
+    .logo{font-size:14px;}
+  }
+  @media (max-width:400px){
+    .logo{font-size:13px; gap:8px;}
+    .logo-mark{width:20px; height:20px;}
   }
 
   /* EYEBROW */
@@ -672,7 +678,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
   <nav>
     <div class="logo">
       <div class="logo-mark"><span></span></div>
-      VERIFAI
+      VERAFAI
     </div>
     <div class="nav-links">
       <a href="index.html" class="nav-link">Home</a>
@@ -682,7 +688,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
     </div>
     <div class="nav-right">
       <a class="btn btn-ghost" href="how-it-works.html">How It Works</a>
-      <a class="btn btn-solid" href="contact.html">Request Demo</a>
+      <a class="btn btn-solid" href="contact.html">Start Free Trial</a>
     </div>
     <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><span></span><span></span><span></span></button>
   </nav>
@@ -691,7 +697,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
     <a href="how-it-works.html">How It Works</a>
     <a href="pricing.html">Pricing</a>
     <a href="contact.html">Contact</a>
-    <a href="contact.html">Request Demo</a>
+    <a href="contact.html">Start Free Trial</a>
   </div>
 </header>
 
@@ -701,7 +707,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
     <div class="crumb"><a href="index.html">Home</a> / Pricing</div>
     <div class="eyebrow"><span class="dot"></span>Pricing</div>
     <h1 class="h1" style="font-size:clamp(36px,5vw,58px); max-width:780px;">Priced by volume, not by guesswork.</h1>
-    <p class="lede lede-wide">Start free while you evaluate accuracy on your own media. Move to a paid plan when you're ready to run Verifai in production. Every plan includes the full explainability layer — no black-box scores, ever.</p>
+    <p class="lede lede-wide">Start free while you evaluate accuracy on your own media. Move to a paid plan when you're ready to run Verafai in production. Every plan includes the full explainability layer — no black-box scores, ever.</p>
 
     <div class="billing-toggle" id="billingToggle">
       <div class="billing-opt active" data-cycle="monthly">Monthly</div>
@@ -731,7 +737,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
         <div class="plan-name">Team</div>
         <div class="plan-price" data-monthly="249" data-annual="199">$249<span>/mo</span></div>
         <div class="plan-desc">For fintech, KYC, and trust &amp; safety teams running verification at real volume.</div>
-        <a class="btn btn-solid plan-cta" href="contact.html">Request Demo</a>
+        <a class="btn btn-solid plan-cta" href="contact.html">Start Free Trial</a>
         <ul class="plan-features">
           <li><span class="fchk">✓</span>2,000 analyses / month</li>
           <li><span class="fchk">✓</span>Video, audio &amp; image detection</li>
@@ -817,7 +823,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
   <div class="wrap">
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="logo"><div class="logo-mark"><span></span></div>VERIFAI</div>
+        <div class="logo"><div class="logo-mark"><span></span></div>VERAFAI</div>
         <p>Multi-modal deepfake and synthetic media detection, continuously retrained against the newest generator models.</p>
         <div class="footer-contact">
           <span><span class="fc-icon">&#128205;</span>21 Oranye Street</span>
@@ -834,7 +840,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
         <div class="footer-col-title">Company</div>
         <a href="index.html#team">Team</a>
         <a href="contact.html">Contact</a>
-        <a href="contact.html">Request Demo</a>
+        <a href="contact.html">Start Free Trial</a>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Legal</div>
@@ -843,8 +849,8 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© <span class="auto-year">2026</span> Verifai Technologies Ltd. Built by Verifai Technologies Ltd.</span>
-      <span>hello@verifai.ai · verifai.ai</span>
+      <span>© <span class="auto-year">2026</span> Verafai Technologies Ltd. Built by Verafai Technologies Ltd.</span>
+      <span>hello@verafai.ai · verafai.ai</span>
     </div>
   </div>
 </footer>
