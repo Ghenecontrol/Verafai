@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Terms of Use — Verifai</title>
+<title>Terms of Use — Verafai</title>
 <style>
 
   :root{
@@ -86,7 +86,13 @@
   .mobile-toggle{display:none;}
   @media (max-width:860px){
     .nav-links{display:none;}
-    nav{padding:16px 20px;}
+    .nav-right{display:none;}
+    nav{padding:14px 20px;}
+    .logo{font-size:14px;}
+  }
+  @media (max-width:400px){
+    .logo{font-size:13px; gap:8px;}
+    .logo-mark{width:20px; height:20px;}
   }
 
   /* EYEBROW */
@@ -672,7 +678,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
   <nav>
     <div class="logo">
       <div class="logo-mark"><span></span></div>
-      VERIFAI
+      VERAFAI
     </div>
     <div class="nav-links">
       <a href="index.html" class="nav-link">Home</a>
@@ -682,7 +688,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
     </div>
     <div class="nav-right">
       <a class="btn btn-ghost" href="pricing.html">Pricing</a>
-      <a class="btn btn-solid" href="contact.html">Request Demo</a>
+      <a class="btn btn-solid" href="contact.html">Start Free Trial</a>
     </div>
     <button class="mobile-toggle" id="mobileToggle" aria-label="Menu"><span></span><span></span><span></span></button>
   </nav>
@@ -691,7 +697,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
     <a href="how-it-works.html">How It Works</a>
     <a href="pricing.html">Pricing</a>
     <a href="contact.html">Contact</a>
-    <a href="contact.html">Request Demo</a>
+    <a href="contact.html">Start Free Trial</a>
   </div>
 </header>
 
@@ -700,7 +706,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
     <div class="crumb"><a href="index.html">Home</a> / Terms of Use</div>
     <div class="eyebrow"><span class="dot"></span>Legal</div>
     <h1 class="h1" style="font-size:clamp(34px,4.6vw,52px); max-width:760px;">Terms of Use</h1>
-    <p class="lede lede-wide">The agreement governing use of Verifai's website, web app, and API. By using Verifai, you agree to these terms.</p>
+    <p class="lede lede-wide">The agreement governing use of Verafai's website, web app, and API. By using Verafai, you agree to these terms.</p>
   </section>
 
   <section class="wrap fade-up">
@@ -721,16 +727,16 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
       </aside>
 
       <article class="docs-content">
-        <div class="docs-meta">Last updated: July 1, 2026 · Applies to all Verifai accounts, pilot users, and API usage</div>
+        <div class="docs-meta">Last updated: July 1, 2026 · Applies to all Verafai accounts, pilot users, and API usage</div>
 
         <h3 id="acceptance">Acceptance of Terms</h3>
-        <p>By accessing or using Verifai's website, web application, or API (collectively, the "Service"), you agree to be bound by these Terms of Use. If you're using the Service on behalf of a company, you're agreeing on that company's behalf, and "you" refers to that company.</p>
+        <p>By accessing or using Verafai's website, web application, or API (collectively, the "Service"), you agree to be bound by these Terms of Use. If you're using the Service on behalf of a company, you're agreeing on that company's behalf, and "you" refers to that company.</p>
 
         <h3 id="accounts">Accounts</h3>
-        <p>You're responsible for maintaining the confidentiality of your account credentials and API keys, and for all activity that occurs under your account. Notify us immediately at <a href="mailto:security@verifai.ai" style="color:var(--mint);">security@verifai.ai</a> if you suspect unauthorized access.</p>
+        <p>You're responsible for maintaining the confidentiality of your account credentials and API keys, and for all activity that occurs under your account. Notify us immediately at <a href="mailto:security@verafai.ai" style="color:var(--mint);">security@verafai.ai</a> if you suspect unauthorized access.</p>
 
         <h3 id="acceptable-use">Acceptable Use</h3>
-        <p>You agree not to use Verifai to:</p>
+        <p>You agree not to use Verafai to:</p>
         <ul>
           <li>Upload media you don't have the legal right to analyze or store;</li>
           <li>Attempt to reverse-engineer, extract, or replicate our detection models;</li>
@@ -739,25 +745,25 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
         </ul>
 
         <h3 id="analysis-results">Analysis Results Are Not Legal Proof</h3>
-        <p>This is important, so we're stating it plainly: Verifai's synthetic-likelihood scores are a decision-support signal, not a certified forensic determination. Our target accuracy is greater than 95% on known generator families — which means results can be wrong, particularly on generator families released since our last retraining cycle. Analysis results should inform human review, not replace it, especially in legal, financial, or safety-critical decisions.</p>
+        <p>This is important, so we're stating it plainly: Verafai's synthetic-likelihood scores are a decision-support signal, not a certified forensic determination. Our target accuracy is greater than 95% on known generator families — which means results can be wrong, particularly on generator families released since our last retraining cycle. Analysis results should inform human review, not replace it, especially in legal, financial, or safety-critical decisions.</p>
 
         <h3 id="ip">Intellectual Property</h3>
-        <p>Verifai retains all rights to the Service, including our detection models, software, and branding. You retain all rights to media you upload. By enabling model-improvement sharing (opt-in only), you grant us a limited license to use confirmed real/fake samples to retrain our detection models.</p>
+        <p>Verafai retains all rights to the Service, including our detection models, software, and branding. You retain all rights to media you upload. By enabling model-improvement sharing (opt-in only), you grant us a limited license to use confirmed real/fake samples to retrain our detection models.</p>
 
         <h3 id="billing">Billing &amp; Plans</h3>
         <p>Paid plans are billed monthly or annually as selected at signup. Team and Pilot plans may be cancelled at any time, effective at the end of the current billing cycle. Enterprise plans are governed by a separate order form and may include custom SLA and payment terms.</p>
 
         <h3 id="termination">Termination</h3>
-        <p>We may suspend or terminate access to the Service for violation of these terms, non-payment, or activity that poses a security or legal risk to Verifai or other users. You may terminate your account at any time by contacting us; see our Privacy Policy for what happens to your data after termination.</p>
+        <p>We may suspend or terminate access to the Service for violation of these terms, non-payment, or activity that poses a security or legal risk to Verafai or other users. You may terminate your account at any time by contacting us; see our Privacy Policy for what happens to your data after termination.</p>
 
         <h3 id="warranty">Disclaimer of Warranty</h3>
-        <p>The Service is provided "as is" without warranties of any kind, express or implied, including accuracy, fitness for a particular purpose, or uninterrupted availability. Verifai is an early-stage product under active development.</p>
+        <p>The Service is provided "as is" without warranties of any kind, express or implied, including accuracy, fitness for a particular purpose, or uninterrupted availability. Verafai is an early-stage product under active development.</p>
 
         <h3 id="liability">Limitation of Liability</h3>
-        <p>To the maximum extent permitted by law, Verifai's total liability for any claim arising from use of the Service is limited to the amount you paid us in the 12 months preceding the claim. We are not liable for indirect, incidental, or consequential damages, including decisions made based on an analysis result.</p>
+        <p>To the maximum extent permitted by law, Verafai's total liability for any claim arising from use of the Service is limited to the amount you paid us in the 12 months preceding the claim. We are not liable for indirect, incidental, or consequential damages, including decisions made based on an analysis result.</p>
 
         <h3 id="law">Governing Law</h3>
-        <p>These terms are governed by the laws of the jurisdiction in which Verifai Technologies Ltd. is incorporated, without regard to conflict-of-law principles.</p>
+        <p>These terms are governed by the laws of the jurisdiction in which Verafai Technologies Ltd. is incorporated, without regard to conflict-of-law principles.</p>
 
         <h3 id="changes-terms">Changes To These Terms</h3>
         <p>We may update these terms as the product evolves. Material changes will be communicated to active account holders by email ahead of taking effect. Continued use of the Service after changes take effect constitutes acceptance.</p>
@@ -779,7 +785,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
   <div class="wrap">
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="logo"><div class="logo-mark"><span></span></div>VERIFAI</div>
+        <div class="logo"><div class="logo-mark"><span></span></div>VERAFAI</div>
         <p>Multi-modal deepfake and synthetic media detection, continuously retrained against the newest generator models.</p>
         <div class="footer-contact">
           <span><span class="fc-icon">&#128205;</span>21 Oranye Street</span>
@@ -796,7 +802,7 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
         <div class="footer-col-title">Company</div>
         <a href="index.html#team">Team</a>
         <a href="contact.html">Contact</a>
-        <a href="index.html#get-access">Request Demo</a>
+        <a href="index.html#get-access">Start Free Trial</a>
       </div>
       <div class="footer-col">
         <div class="footer-col-title">Legal</div>
@@ -805,8 +811,8 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
       </div>
     </div>
     <div class="footer-bottom">
-      <span>© <span class="auto-year">2026</span> Verifai Technologies Ltd. Built by Verifai Technologies Ltd.</span>
-      <span>hello@verifai.ai · verifai.ai</span>
+      <span>© <span class="auto-year">2026</span> Verafai Technologies Ltd. Built by Verafai Technologies Ltd.</span>
+      <span>hello@verafai.ai · verafai.ai</span>
     </div>
   </div>
 </footer>
