@@ -63,11 +63,7 @@
     padding:20px 40px; max-width:1180px; margin:0 auto;
   }
   .logo{display:flex; align-items:center; gap:10px; font-weight:700; letter-spacing:0.06em; font-size:15px;}
-  .logo-mark{
-    width:22px; height:22px; border:1.5px solid var(--mint); border-radius:6px;
-    display:flex; align-items:center; justify-content:center;
-  }
-  .logo-mark span{width:7px; height:7px; border-radius:50%; background:var(--mint); box-shadow:0 0 8px var(--mint);}
+  .logo-icon{width:26px; height:26px; flex-shrink:0; display:block;}
   .nav-links{display:flex; gap:34px; font-size:14px; color:var(--text-dim);}
   .nav-links a{transition:color .15s;}
   .nav-links a:hover, .nav-links a.active{color:var(--mint);}
@@ -92,7 +88,7 @@
   }
   @media (max-width:400px){
     .logo{font-size:13px; gap:8px;}
-    .logo-mark{width:20px; height:20px;}
+    .logo-icon{width:20px; height:20px;}
   }
 
   /* EYEBROW */
@@ -403,6 +399,13 @@
   .footer-contact{margin-top:18px; display:flex; flex-direction:column; gap:6px; font-family:var(--mono); font-size:13px; color:var(--text-dim);}
   .footer-contact span{display:flex; align-items:center; gap:8px;}
   .footer-contact .fc-icon{color:var(--mint-dim); flex-shrink:0;}
+  .footer-socials{display:flex; gap:10px; margin-top:18px;}
+  .footer-social-btn{
+    width:34px; height:34px; border-radius:50%; border:1px solid var(--line); display:flex; align-items:center;
+    justify-content:center; color:var(--text-dim); transition:all .15s; flex-shrink:0;
+  }
+  .footer-social-btn:hover{color:var(--mint); border-color:var(--mint); background:rgba(46,235,160,0.06); transform:translateY(-2px);}
+  .footer-social-btn svg{width:15px; height:15px;}
   .footer-col-title{font-family:var(--mono); font-size:11px; letter-spacing:0.1em; text-transform:uppercase; color:var(--text-faint); margin-bottom:16px;}
   .footer-col a{display:block; font-size:14px; color:var(--text-dim); margin-bottom:12px; transition:color .15s;}
   .footer-col a:hover{color:var(--mint);}
@@ -677,7 +680,17 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
 <header>
   <nav>
     <div class="logo">
-      <div class="logo-mark"><span></span></div>
+      <svg class="logo-icon" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="0" y="0" width="200" height="200" rx="42" fill="#0a0f0d"/>
+        <g stroke="#2eeba0" stroke-width="8" stroke-linecap="round" fill="none">
+          <path d="M28 50 L28 28 L50 28"/>
+          <path d="M150 28 L172 28 L172 50"/>
+          <path d="M172 150 L172 172 L150 172"/>
+          <path d="M50 172 L28 172 L28 150"/>
+        </g>
+        <path d="M66 58 L100 146 L134 58" fill="none" stroke="#2eeba0" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="100" cy="146" r="8" fill="#eafff5"/>
+      </svg>
       VERAFAI
     </div>
     <div class="nav-links">
@@ -785,11 +798,29 @@ table.compare-table{width:100%; border-collapse:collapse; min-width:640px;}
   <div class="wrap">
     <div class="footer-grid">
       <div class="footer-brand">
-        <div class="logo"><div class="logo-mark"><span></span></div>VERAFAI</div>
+        <div class="logo"><svg class="logo-icon" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <rect x="0" y="0" width="200" height="200" rx="42" fill="#0a0f0d"/>
+        <g stroke="#2eeba0" stroke-width="8" stroke-linecap="round" fill="none">
+          <path d="M28 50 L28 28 L50 28"/>
+          <path d="M150 28 L172 28 L172 50"/>
+          <path d="M172 150 L172 172 L150 172"/>
+          <path d="M50 172 L28 172 L28 150"/>
+        </g>
+        <path d="M66 58 L100 146 L134 58" fill="none" stroke="#2eeba0" stroke-width="18" stroke-linecap="round" stroke-linejoin="round"/>
+        <circle cx="100" cy="146" r="8" fill="#eafff5"/>
+      </svg>VERAFAI</div>
         <p>Multi-modal deepfake and synthetic media detection, continuously retrained against the newest generator models.</p>
         <div class="footer-contact">
-          <span><span class="fc-icon">&#128205;</span>21 Oranye Street</span>
-          <span><span class="fc-icon">&#128222;</span>0813 643 3334</span>
+          <span><span class="fc-icon">&#128205;</span>35 Arch-Bishop Herry</span>
+          <span><span class="fc-icon">&#128222;</span>0806 616 8018</span>
+        </div>
+        <div class="footer-socials">
+          <a href="https://x.com/VERAFAITE" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="Verafai on X" title="X (Twitter)">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.24 3H21l-6.34 7.24L22 21h-6.19l-4.84-6.34L5.4 21H2.6l6.78-7.75L2 3h6.35l4.38 5.8L18.24 3zm-1.08 16.17h1.53L7.9 4.73H6.26L17.16 19.17z"/></svg>
+          </a>
+          <a href="https://www.linkedin.com/company/135306433/admin/dashboard/" target="_blank" rel="noopener noreferrer" class="footer-social-btn" aria-label="Verafai on LinkedIn" title="LinkedIn">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M20.45 20.45h-3.56v-5.57c0-1.33-.02-3.03-1.85-3.03-1.86 0-2.14 1.45-2.14 2.94v5.66H9.34V9h3.41v1.56h.05c.48-.9 1.64-1.85 3.38-1.85 3.61 0 4.28 2.38 4.28 5.47v6.27zM5.34 7.43a2.07 2.07 0 1 1 0-4.13 2.07 2.07 0 0 1 0 4.13zM7.12 20.45H3.56V9h3.56v11.45z"/></svg>
+          </a>
         </div>
       </div>
       <div class="footer-col">
